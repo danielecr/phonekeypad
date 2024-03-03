@@ -1,9 +1,7 @@
 use std::collections::HashMap;
 use std::env::args;
-use std::sync::Arc;
 use std::time::Duration;
-use rodio::dynamic_mixer::DynamicMixerController;
-use rodio::{source, Decoder, OutputStream, Sink};
+use rodio::{source, OutputStream, Sink};
 use rodio::source::{Amplify, SineWave, Source, TakeDuration};
 
 #[derive(Clone)]
