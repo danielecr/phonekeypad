@@ -45,6 +45,6 @@ Come faccio a sequenzializzare dei `SineWave`?
 `source::from_iter()` accetta un iterator e crea una sorgente.
 Tecnicamente _prende_ un iterator e crea una sorgente, cioè ne acquisisce l'ownership.
 
-A questo punto stilisticamente dovrei rivedere un po' come organizzare il codice.
+Infine trovo unzip(): https://doc.rust-lang.org/nightly/std/iter/trait.Iterator.html#method.unzip
 
-Un'idea
+Forse il progetto rimane così, intanto è un esempio di come usare mixer.
