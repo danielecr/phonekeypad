@@ -1,50 +1,57 @@
-# Tastierino telefono
+# Phone Keypad
 
-L'idea è molto semplice, anche se leggermente eterodossa, specialmente di domenica:
+Play the phone keypad: a sunday project.
 
-fare un tastierino del telefono.
+## Prelude
 
-## Antefatto
+I read a science informativ article on time and perception in psicological ordering.
+It say we normally do not perceive the sequence of a phone keypad.
+That does not convince me, so I wrote this code to ear it.
 
-Leggo un'articolo divulgativo (percezione e tempo in psicologia) che parla della
-difficoltà di riconoscere la sequenza di suoni prodotta da tastierino del telefono
-(ad esemppio quando si usa "ripeti numero"), questa cosa non mi e decido di fare
-qualche prova realistica, ma senza telefono.
-
-## rodio: il crate
+## rodio: the crate
 
 https://crates.io/crates/rodio
-Decido di usare il crate rodio, gli esempi basilari sono facili da capire, e produco
-qualche suono da un generatore sinusoidale.
+I take crate rodio, basic examples are easy, I produce some sounds with SineWave
+generator.
 
-Ora penso che il tastierino del telefono produca una sinusoide, quindi posso trovarne la frequenza.
-Cerco ...
+I was convinced phone keypad produce one SineWave for each key, so I can write it
+easily.
+Search for frequencies ...
 
 > wikipedia: https://en.wikipedia.org/wiki/Telephone_keypad#Key_tones
 
-Effettivamente è poco chiaro
+A cleaner article:
 
 > https://www.sigidwiki.com/wiki/Dual_Tone_Multi_Frequency_%28DTMF%29
 
-Ora è chiaro: ogni tasto del tastierino produce 2 note sinusoidali che vanno sommate.
+So, no. I was wrong: a key produces 2 SineWave.
 
-La documentazione dice che esiste un mixer che può essere creato tramite
+rodio has a mixer created by
 `rodio::dynamic_mixer::mixer(channel, sample_rate)`
 
-Penso che 2 canali siano sufficienti, visto che devo produrre 2 sinusoidi contemporaneamente.
+So 2 channel is exactly what I need.
 
-Ora, visto che il controller del mixer ha il metodo `add()` che accetta una sorgente
-alla quale non si può più aggiungere nulla, tutta la sequenza dei suoni va preparata per ogni
-canale.
+SineWave produce sound at 48_000 sample rate, and this is ok.
 
-Senza complicare le cose, un canale riproduce le "frequenze orizzontali", e l'altro le
-"frequenze verticali".
+But a sequence of keypad keys must be sequenced then splitted in two channel.
 
-Come faccio a sequenzializzare dei `SineWave`?
+`source::from_iter()` accepts an iterator and create a Source.
+So it take the ownership, I use
+https://doc.rust-lang.org/nightly/std/iter/trait.Iterator.html#method.unzip
 
-`source::from_iter()` accetta un iterator e crea una sorgente.
-Tecnicamente _prende_ un iterator e crea una sorgente, cioè ne acquisisce l'ownership.
+Ok this is the code.
 
-Infine trovo unzip(): https://doc.rust-lang.org/nightly/std/iter/trait.Iterator.html#method.unzip
+## Future
 
-Forse il progetto rimane così, intanto è un esempio di come usare mixer.
+(I mean, not "Rust Future"). I admit that this tool is very annoying, also
+it is not possible to make it interactive.
+
+Rodio provides 2 utilities for crafting a source:
+
+- `from_iter()`
+- `from_factory()`
+
+`from_factory()` take a function. To make it interactive it must exists 2 function
+that produce void SineWave (volume 0.0) until there is a input key.
+
+A maybe future.
