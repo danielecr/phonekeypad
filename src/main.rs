@@ -32,30 +32,26 @@ struct PhoneKeys {
 
 impl PhoneKeys {
     fn new() -> Self {
-        let mut freq_map = HashMap::new();
-        let fv = vec![697.0, 770.0, 852.0, 941.0];
-        let fh = vec![1209.0, 1336.0, 1477.0, 1633.0];
-        freq_map.insert('1',(fv[0], fh[0]));
-        freq_map.insert('2',(fv[0], fh[1]));
-        freq_map.insert('3',(fv[0], fh[2]));
-        freq_map.insert('A',(fv[0], fh[3]));
-        freq_map.insert('4',(fv[1], fh[0]));
-        freq_map.insert('5',(fv[1], fh[1]));
-        freq_map.insert('6',(fv[1], fh[2]));
-        freq_map.insert('B',(fv[1], fh[3]));
-        freq_map.insert('7',(fv[2], fh[0]));
-        freq_map.insert('8',(fv[2], fh[1]));
-        freq_map.insert('9',(fv[2], fh[2]));
-        freq_map.insert('C',(fv[2], fh[3]));
-        freq_map.insert('*',(fv[1], fh[0]));
-        freq_map.insert('0',(fv[1], fh[1]));
-        freq_map.insert('#',(fv[1], fh[2]));
-        freq_map.insert('D',(fv[1], fh[3]));
+        const FV: [f32; 4] = [697.0, 770.0, 852.0, 941.0];
+        const FH: [f32; 4] = [1209.0, 1336.0, 1477.0, 1633.0];
+        const CHARS: [char; 16] = [
+        '1', '2', '3', 'A',
+        '4', '5', '6', 'B',
+        '7', '8', '9', 'C',
+        '*', '0', '#', 'D',
+        ];
+        let freq_map = CHARS
+        .into_iter()
+        .zip(
+            FV.into_iter()
+            .flat_map(|fv| FH.into_iter().map(move |fh| (fv, fh))),
+        )
+        .collect();
         PhoneKeys {
             freq_map
         }
     }
-
+    
     fn add_key(&self, k: &char) -> (Pitch, Pitch) {
         let (f1, f2) = self.freq_map.get(k).unwrap();
         let duration = 150_000_000;
